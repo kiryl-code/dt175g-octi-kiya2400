@@ -13,7 +13,7 @@ import se.miun.dt175g.octi.core.Player;
 import se.miun.dt175g.octi.core.communicator.PlayerSetup;
 
 
-// You shouldn't change this class
+//DON'T CHANGE!
 public class GameClient {
 	private static final Logger logger = Logger.getLogger(GameClient.class.getName());
 	private Socket clientSocket;

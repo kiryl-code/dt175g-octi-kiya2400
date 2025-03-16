@@ -6,7 +6,7 @@ import se.miun.dt175g.octi.core.communicator.PlayerSetup;
 
 
 
-
+//DON'T CHANGE!
 public class OctiGameNoGameToParticipateException extends OctiGameSetupException {
 
 	private static final long serialVersionUID = 1L;
