@@ -10,6 +10,13 @@ public class Main {
 		PlayerSetup setup = new PlayerSetupParser().parse(args);
 		GameClient gc = new GameClient(setup, new StudentAgent());
 		gc.play();
+
+		/* If you don't want to use the PlayerSetupParser, you can use the following code
+		IMPORTANT: Before submitting your code, you must remove/comment out this code and
+		 use the PlayerSetupParser code instead. */
+		// PlayerSetup setup = new PlayerSetup("127.0.0.1", 6000, "black", "SOME_NAME");
+		// GameClient gc = new GameClient(setup, new StudentAgent());
+		// gc.play();
 		
 	}
 }

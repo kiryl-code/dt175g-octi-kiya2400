@@ -9,6 +9,7 @@ import se.miun.dt175g.octi.core.Agent;
 import se.miun.dt175g.octi.core.OctiAction;
 import se.miun.dt175g.octi.core.OctiJsonAdapter;
 import se.miun.dt175g.octi.core.OctiState;
+import se.miun.dt175g.octi.core.OctiStateFactory;
 import se.miun.dt175g.octi.core.Player;
 import se.miun.dt175g.octi.core.communicator.PlayerSetup;
 
@@ -105,7 +106,7 @@ public class GameClient {
 					logger.log(Level.INFO, "Received null state. Exiting loop.");
 					break;
 				}
-				OctiState state = OctiState.createStateFromJson(stateAsJson);
+				OctiState state = OctiStateFactory.createStateFromJson(stateAsJson);
 				OctiAction action = studentAgent.getNextMove(state);
 				String actionJson = OctiJsonAdapter.octiActionToJson(action);
 				this.sendJsonAction(actionJson);
