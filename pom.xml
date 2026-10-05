@@ -56,9 +56,9 @@
 		<dependency>
 			<groupId>se.miun.dt175g</groupId>
 			<artifactId>octi-core</artifactId>
-			<version>0.0.6</version>
+			<version>0.0.7</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/octi-core-0.0.6.jar</systemPath>
+			<systemPath>${project.basedir}/lib/octi-core-0.0.7.jar</systemPath>
 		</dependency>
 	</dependencies>
 </project>
