@@ -31,26 +31,34 @@ public class StudentAgent extends Agent {
 	);
 	private int stepCounter = 0;
 	private int maxDepth = 2;
+	private long maxTime = 0;
+	private boolean shouldStop = false;
 	
 	@Override
 	public OctiAction getNextMove(OctiState state) {
+		long startTime = System.currentTimeMillis();
+		maxTime = startTime +((long) (getTimeLimit() * 0.9));
+		shouldStop = false;
+
 		Node<OctiState, OctiAction> root = Node.root(state);
 		List<Node<OctiState, OctiAction>> childStates = Agent.generateChildNodes(root);
 		RewardValue bestReward = new RewardValue(maxDepth, false);
 		Node<OctiState, OctiAction> bestNode = null;
 		stepCounter++;
 		for (Node<OctiState, OctiAction> node : childStates) {
-			RewardValue stateValue = doMagic(node.state, maxDepth, false);
-			System.out.println("Step: " + stepCounter + "; StateReward: " + stateValue.getValue() + "; Best: " + bestReward.getValue() + "; Applying: " + (stateValue.compareTo(bestReward) > 0));
-			if (stateValue.compareTo(new RewardValue(maxDepth, true)) == 0) { // optimization 1?
+			RewardValue stateValue = doMagic(node.state, maxDepth,  new RewardValue(0, false), new RewardValue(0, true),false);
+//			System.out.println("Step: " + stepCounter + "; StateReward: " + stateValue.getValue() + "; Best: " + bestReward.getValue() + "; Applying: " + (stateValue.compareTo(bestReward) > 0));
+			if (stateValue.compareTo(new RewardValue(maxDepth, true)) == 0) {
 				return (OctiAction) node.action;
 			}
 			if (stateValue.compareTo(bestReward) > 0 ) {
 				bestReward = stateValue;
 				bestNode = node;
-				System.out.println("bestReward: " + bestReward);
+//				System.out.println("bestReward: " + bestReward);
 			}
 		}
+		long endTime = System.currentTimeMillis();
+		System.out.println("" + stepCounter +" Time: " + (endTime - startTime));
 		if (bestNode == null) {
 			return childStates.getFirst().action;
 		}
@@ -61,30 +69,38 @@ public class StudentAgent extends Agent {
 		return this.player.getColor();
 	}
 
-	private RewardValue doMagic(OctiState state, int depth, boolean isMaximizingPlayer) {
+	private RewardValue doMagic(OctiState state, int depth, RewardValue alpha, RewardValue beta, boolean isMaximizingPlayer) {
 		if (depth == 0 || state.isTerminal()) {
 			return calculateReward(state, depth);
 		}
 		Node<OctiState, OctiAction> currentNode = Node.root(state);
 		List<Node<OctiState, OctiAction>> subTree = Agent.generateChildNodes(currentNode);
+		subTree.sort((n1, n2) -> {RewardValue a = calculateReward(n1.state, depth); RewardValue b = calculateReward(n2.state, depth); return isMaximizingPlayer ? b.compareTo(a) : a.compareTo(b); });
 		if (isMaximizingPlayer) {
-			RewardValue maxEval = new RewardValue(-Double.MAX_VALUE, depth);
+			RewardValue maxEval = null;
+
 			for (Node<OctiState, OctiAction> node : subTree) {
-				RewardValue nextLevelValue = doMagic(node.state, depth - 1, false);
-				if (nextLevelValue.compareTo(maxEval) > 0) {
-					maxEval = nextLevelValue;
+				RewardValue nextLevelValue = doMagic(node.state, depth - 1,  alpha, beta,false);
+				maxEval = RewardValue.max(maxEval, nextLevelValue);
+				alpha = RewardValue.max(alpha, nextLevelValue);
+				if (beta.compareTo(alpha) <= 0) {
+					break;
 				}
 			}
-			return maxEval;
+
+			return maxEval == null ? new RewardValue(-Double.MAX_VALUE, depth) : maxEval;
 		} else {
-			RewardValue minEval = new RewardValue(Double.MAX_VALUE, depth);
+			RewardValue minEval = null;
+
 			for (Node<OctiState, OctiAction> node : subTree) {
-				RewardValue nextLevelValue = doMagic(node.state, depth-1, true);
-				if (nextLevelValue.compareTo(minEval) < 0) {
-					minEval = nextLevelValue;
+				RewardValue nextLevelValue = doMagic(node.state, depth-1,  alpha, beta, true);
+				minEval = RewardValue.min(nextLevelValue, minEval);
+				beta = RewardValue.min(beta, nextLevelValue);
+				if (alpha.compareTo(beta) >= 0) {
+					break;
 				}
 			}
-			return minEval;
+			return minEval == null ? new RewardValue(Double.MAX_VALUE, depth) : minEval;
 		}
 	}
 

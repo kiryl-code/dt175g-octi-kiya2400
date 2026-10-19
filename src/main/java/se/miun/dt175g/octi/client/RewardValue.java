@@ -18,6 +18,18 @@ public class RewardValue implements Comparable<RewardValue> {
         this.type = isWin ? Type.WIN : Type.LOSS;
     }
 
+    public boolean isGreaterThan(RewardValue value) {
+        return compareTo(value) > 0;
+    }
+
+    public boolean isLessThan(RewardValue value) {
+        return compareTo(value) < 0;
+    }
+
+    public boolean isEqualTo(RewardValue value) {
+        return compareTo(value) == 0;
+    }
+
     public int compareTo(RewardValue value) {
         if (type != value.type) {
             return type.compareTo(value.type);
@@ -31,7 +43,17 @@ public class RewardValue implements Comparable<RewardValue> {
         return Double.compare(this.value, value.value);
     }
 
-    public double getValue() {
-        return value;
+    public static RewardValue max(RewardValue a, RewardValue b) {
+        if (a == null && b == null) throw new IllegalArgumentException("Both values are null");
+        if (a == null) return b;
+        if (b == null) return a;
+        return a.compareTo(b) > 0 ? a : b;
+    }
+
+    public static RewardValue min(RewardValue a, RewardValue b) {
+        if (a == null && b == null) throw new IllegalArgumentException("Both values are null");
+        if (a == null) return b;
+        if (b == null) return a;
+        return a.compareTo(b) < 0 ? a : b;
     }
 }
