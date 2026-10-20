@@ -19,14 +19,17 @@ public class RewardValue implements Comparable<RewardValue> {
     }
 
     public boolean isGreaterThan(RewardValue value) {
+        if (value == null) return true;
         return compareTo(value) > 0;
     }
 
     public boolean isLessThan(RewardValue value) {
+        if (value == null) return true;
         return compareTo(value) < 0;
     }
 
     public boolean isEqualTo(RewardValue value) {
+        if (value == null) return false;
         return compareTo(value) == 0;
     }
 
